@@ -1,7 +1,15 @@
-import { useState, useEffect } from 'react';
-import { Play, Pause, RotateCcw, BookOpen, Sliders, Eye } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import {
+  Play,
+  Pause,
+  RotateCcw,
+  BookOpen,
+  Sliders,
+  Eye,
+  type LucideIcon,
+} from 'lucide-react';
 
-/* ---------- Types ---------- */
+/* ================= TYPES ================= */
 
 type TabId = 'cosmology' | 'dictionary' | 'simulator' | 'experiential';
 
@@ -12,7 +20,7 @@ interface Insight {
 
 interface TabButtonProps {
   id: TabId;
-  icon: React.ComponentType<{ size?: number }>;
+  icon: LucideIcon;
   label: string;
 }
 
@@ -23,9 +31,9 @@ interface FlowNode {
   y: number;
 }
 
-/* ---------- Component ---------- */
+/* ================= COMPONENT ================= */
 
-const ConsciousnessModel = () => {
+export default function App() {
   const [activeTab, setActiveTab] = useState<TabId>('cosmology');
   const [isAnimating, setIsAnimating] = useState<boolean>(true);
   const [animationPhase, setAnimationPhase] = useState<number>(0);
@@ -37,7 +45,7 @@ const ConsciousnessModel = () => {
   const [insights, setInsights] = useState<Insight[]>([]);
   const [collapsedNodes, setCollapsedNodes] = useState<string[]>([]);
 
-  /* ---------- Effects ---------- */
+  /* ================= EFFECTS ================= */
 
   useEffect(() => {
     if (!isAnimating) return;
@@ -56,17 +64,17 @@ const ConsciousnessModel = () => {
     if (!saved) return;
 
     try {
-      const state: Partial<{
+      const parsed: Partial<{
         distinctions: number;
         ideation: number;
         complexity: number;
       }> = JSON.parse(saved);
 
-      setDistinctions(state.distinctions ?? 50);
-      setIdeation(state.ideation ?? 50);
-      setComplexity(state.complexity ?? 50);
+      setDistinctions(parsed.distinctions ?? 50);
+      setIdeation(parsed.ideation ?? 50);
+      setComplexity(parsed.complexity ?? 50);
     } catch {
-      /* ignore corrupted state */
+      /* ignore */
     }
   }, []);
 
@@ -79,18 +87,16 @@ const ConsciousnessModel = () => {
     );
   }, [distinctions, ideation, complexity]);
 
-  /* ---------- Helpers ---------- */
+  /* ================= HELPERS ================= */
 
   const addInsight = (text: string) => {
-    const newInsight: Insight = {
-      text,
-      timestamp: Date.now(),
-    };
-
-    setInsights(prev => [...prev.slice(-9), newInsight]);
+    setInsights(prev => [
+      ...prev.slice(-9),
+      { text, timestamp: Date.now() },
+    ]);
   };
 
-  /* ---------- Subcomponents ---------- */
+  /* ================= UI ================= */
 
   const TabButton = ({ id, icon: Icon, label }: TabButtonProps) => (
     <button
@@ -108,10 +114,10 @@ const ConsciousnessModel = () => {
 
   const CosmologyView = () => {
     const flow: FlowNode[] = [
-      { id: 'ONE', label: 'ONE', desc: 'Absolute/Void', y: 80 },
-      { id: 'one', label: 'one', desc: 'Vortex/Focus', y: 180 },
+      { id: 'ONE', label: 'ONE', desc: 'Absolute / Void', y: 80 },
+      { id: 'one', label: 'one', desc: 'Vortex / Focus', y: 180 },
       { id: 'Self', label: 'Self', desc: 'Self-Awareness', y: 280 },
-      { id: 'one+', label: 'one+', desc: 'Enriched/Embodied', y: 380 },
+      { id: 'one+', label: 'one+', desc: 'Embodied', y: 380 },
       { id: 'ONE+', label: 'ONE+', desc: 'Value Fulfilled', y: 480 },
       { id: 'infinity', label: '∞', desc: 'Eternal Circuit', y: 580 },
     ];
@@ -121,20 +127,19 @@ const ConsciousnessModel = () => {
 
       setCollapsedNodes(prev => [...prev, nodeId]);
 
-      const nodeIndex = flow.findIndex(n => n.id === nodeId);
-      if (nodeIndex < 0) return;
+      const index = flow.findIndex(n => n.id === nodeId);
+      if (index < 0) return;
 
-      const boost = 100 - nodeIndex * 15;
+      const boost = 100 - index * 15;
 
-      setDistinctions(prev => Math.min(100, prev + boost));
-      setIdeation(prev => Math.min(100, prev + boost * 0.7));
+      setDistinctions(p => Math.min(100, p + boost));
+      setIdeation(p => Math.min(100, p + boost * 0.7));
 
-      addInsight(`Collapsed distinction at ${flow[nodeIndex].label}`);
+      addInsight(`Collapsed distinction at ${flow[index].label}`);
     };
 
     return (
       <div className="relative h-[650px] bg-gradient-to-b from-indigo-950 to-black rounded-xl p-8 overflow-hidden">
-        {/* controls */}
         <div className="absolute top-4 right-4 flex gap-2 z-10">
           <button
             onClick={() => setIsAnimating(a => !a)}
@@ -142,6 +147,7 @@ const ConsciousnessModel = () => {
           >
             {isAnimating ? <Pause size={20} /> : <Play size={20} />}
           </button>
+
           <button
             onClick={() => {
               setAnimationPhase(0);
@@ -153,7 +159,6 @@ const ConsciousnessModel = () => {
           </button>
         </div>
 
-        {/* svg */}
         <svg className="w-full h-full">
           {flow.slice(0, -1).map((_, i) => (
             <line
@@ -169,22 +174,29 @@ const ConsciousnessModel = () => {
           ))}
 
           {flow.map((node, i) => {
-            const isCollapsed = collapsedNodes.includes(node.id);
+            const collapsed = collapsedNodes.includes(node.id);
             const radius =
-              node.label === 'ONE' || node.label === 'ONE+' || node.label === '∞'
+              node.label === 'ONE' ||
+              node.label === 'ONE+' ||
+              node.label === '∞'
                 ? 45
                 : 38;
+
             const opacity = 0.7 + 0.3 * Math.sin(animationPhase + i);
 
             return (
-              <g key={node.id} onClick={() => handleCollapse(node.id)} className="cursor-pointer">
+              <g
+                key={node.id}
+                onClick={() => handleCollapse(node.id)}
+                className="cursor-pointer"
+              >
                 <circle
                   cx="50%"
                   cy={node.y}
-                  r={isCollapsed ? radius * 1.3 : radius}
+                  r={collapsed ? radius * 1.3 : radius}
                   fill={`rgba(139,92,246,${opacity * 0.2})`}
                   stroke={`rgba(139,92,246,${opacity})`}
-                  strokeWidth={isCollapsed ? 4 : 2}
+                  strokeWidth={collapsed ? 4 : 2}
                 />
                 <text
                   x="50%"
@@ -211,11 +223,42 @@ const ConsciousnessModel = () => {
     );
   };
 
-  /* ---------- Render ---------- */
+  const ExperientialView = () => (
+    <div className="max-w-3xl mx-auto space-y-6 text-center">
+      <h3 className="text-2xl font-bold text-violet-300">
+        Direct Recognition
+      </h3>
+
+      <p className="text-gray-300 text-lg">
+        These are invitations to look directly — not beliefs to adopt.
+      </p>
+
+      {insights.length > 0 && (
+        <div className="space-y-3">
+          <h4 className="text-violet-400 font-semibold">
+            Recent Insights
+          </h4>
+          {insights
+            .slice()
+            .reverse()
+            .map((i, idx) => (
+              <div
+                key={idx}
+                className="bg-gray-800/50 rounded-lg p-4 text-gray-300"
+              >
+                {i.text}
+              </div>
+            ))}
+        </div>
+      )}
+    </div>
+  );
+
+  /* ================= RENDER ================= */
 
   return (
-    <div className="min-h-screen bg-black text-white p-4 md:p-8">
-      <nav className="flex flex-wrap gap-3 justify-center mb-6">
+    <div className="min-h-screen bg-black text-white p-6">
+      <nav className="flex justify-center flex-wrap gap-3 mb-8">
         <TabButton id="cosmology" icon={RotateCcw} label="Cosmology" />
         <TabButton id="dictionary" icon={BookOpen} label="Dictionary" />
         <TabButton id="simulator" icon={Sliders} label="Simulator" />
@@ -223,8 +266,7 @@ const ConsciousnessModel = () => {
       </nav>
 
       {activeTab === 'cosmology' && <CosmologyView />}
+      {activeTab === 'experiential' && <ExperientialView />}
     </div>
   );
-};
-
-export default ConsciousnessModel;
+}
