@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CosmologyView from "./CosmologyView";
+import CosmologyView from "./views/CosmologyView";
 
 type Tab = "cosmology" | "dictionary" | "simulator" | "practice";
 
@@ -7,15 +7,16 @@ export default function App() {
   const [tab, setTab] = useState<Tab>("cosmology");
 
   return (
-    <div className="w-screen h-screen bg-black text-white overflow-hidden">
+    <div className="w-screen h-screen text-white bg-black">
       {/* Top Nav */}
-      <div className="flex gap-2 p-3 justify-center">
+      <div className="flex gap-2 p-3 bg-black/60 backdrop-blur">
         {(["cosmology", "dictionary", "simulator", "practice"] as Tab[]).map(t => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-4 py-2 rounded-lg text-sm capitalize touch-manipulation
-              ${tab === t ? "bg-purple-600" : "bg-gray-800"}`}
+            className={`px-4 py-2 rounded-lg capitalize touch-manipulation ${
+              tab === t ? "bg-purple-600" : "bg-gray-800"
+            }`}
           >
             {t}
           </button>
@@ -23,11 +24,11 @@ export default function App() {
       </div>
 
       {/* View */}
-      <div className="w-full h-[calc(100%-56px)]">
+      <div className="w-full h-[calc(100vh-56px)]">
         {tab === "cosmology" && <CosmologyView />}
         {tab !== "cosmology" && (
-          <div className="h-full flex items-center justify-center text-gray-500">
-            {tab} view (coming next)
+          <div className="flex items-center justify-center h-full opacity-60">
+            {tab} coming soon
           </div>
         )}
       </div>
