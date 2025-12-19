@@ -9,16 +9,7 @@ const ConsciousnessModel = () => {
   const [ideation, setIdeation] = useState(50);
   const [complexity, setComplexity] = useState(50);
   const [insights, setInsights] = useState([]);
-  const [learningMode, setLearningMode] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
   const [collapsedNodes, setCollapsedNodes] = useState([]);
-
-  const learningPath = {
-    1: { tab: 'cosmology', message: 'First, understand the eternal architecture of consciousness...' },
-    2: { tab: 'dictionary', message: 'Now learn the new language for describing reality...' },
-    3: { tab: 'simulator', message: 'Explore how consciousness parameters interact...' },
-    4: { tab: 'experiential', message: 'Finally, apply these insights directly...' }
-  };
 
   useEffect(() => {
     if (!isAnimating) return;
@@ -36,15 +27,14 @@ const ConsciousnessModel = () => {
         setDistinctions(state.distinctions || 50);
         setIdeation(state.ideation || 50);
         setComplexity(state.complexity || 50);
-        setInsights(state.insights || []);
       } catch (e) {}
     }
   }, []);
 
   useEffect(() => {
-    const state = { distinctions, ideation, complexity, insights: insights.slice(-10) };
+    const state = { distinctions, ideation, complexity };
     localStorage.setItem('consciousnessModelState', JSON.stringify(state));
-  }, [distinctions, ideation, complexity, insights]);
+  }, [distinctions, ideation, complexity]);
 
   const addInsight = (text) => {
     const newInsight = { text, timestamp: Date.now() };
@@ -53,13 +43,7 @@ const ConsciousnessModel = () => {
 
   const TabButton = ({ id, icon: Icon, label }) => (
     <button
-      onClick={() => {
-        setActiveTab(id);
-        if (learningMode) {
-          const step = Object.keys(learningPath).find(key => learningPath[Number(key)].tab === id);
-          if (step) setCurrentStep(Number(step));
-        }
-      }}
+      onClick={() => setActiveTab(id)}
       className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${activeTab === id ? 'bg-violet-600 text-white shadow-lg' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
     >
       <Icon size={18} />
@@ -234,12 +218,6 @@ const ConsciousnessModel = () => {
             Consciousness-First Reality
           </h1>
           <p className="text-gray-400 text-lg">Interactive exploration of consciousness as the ground of being</p>
-          <button
-            onClick={() => setLearningMode(!learningMode)}
-            className={`inline-flex items-center gap-2 px-6 py-3 rounded-full text-lg font-medium ${learningMode ? 'bg-amber-600 text-white' : 'bg-gray-800 text-gray-400'}`}
-          >
-            Learning Mode
-          </button>
         </header>
 
         <nav className="flex flex-wrap gap-3 justify-center">
@@ -255,6 +233,10 @@ const ConsciousnessModel = () => {
           {activeTab === 'simulator' && <SimulatorView />}
           {activeTab === 'experiential' && <ExperientialView />}
         </main>
+
+        <footer className="text-center text-sm text-gray-600 pb-8">
+          <p>MIT Licensed • All data stays local • Built with love for direct recognition</p>
+        </footer>
       </div>
     </div>
   );
