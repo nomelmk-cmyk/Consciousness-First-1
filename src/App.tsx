@@ -4,7 +4,7 @@ import { RotateCcw, BookOpen, Sliders, Eye } from 'lucide-react';
 const ConsciousnessModel = () => {
   const [activeTab, setActiveTab] = React.useState('cosmology');
 
-  const TabButton = ({ id, icon: Icon, label }) => (
+  const TabButton = ({ id, icon: Icon, label }: { id: string; icon: React.ComponentType<any>; label: string }) => (
     <button
       onClick={() => setActiveTab(id)}
       className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${activeTab === id ? 'bg-violet-600 text-white shadow-lg' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
