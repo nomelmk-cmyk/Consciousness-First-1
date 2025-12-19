@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CosmologyView from "./views/CosmologyView";
+import CosmologyView from "./Views/CosmologyView";
 
 type Tab = "cosmology" | "dictionary" | "simulator" | "practice";
 
