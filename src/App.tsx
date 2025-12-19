@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Play, Pause, RotateCcw, BookOpen, Sliders, Eye, Download, Upload, Users, Brain, Lightbulb, X, Check, AlertCircle, Share2 } from 'lucide-react';
+import { RotateCcw, BookOpen, Sliders, Eye } from 'lucide-react';
 
 const ConsciousnessModel: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'cosmology' | 'dictionary' | 'simulator' | 'experiential'>('cosmology');
