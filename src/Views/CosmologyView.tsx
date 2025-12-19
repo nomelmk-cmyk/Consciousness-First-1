@@ -23,7 +23,7 @@ export default function CosmologyView() {
   const [animate, setAnimate] = useState(true);
   const raf = useRef<number | null>(null);
 
-    useEffect(() => {
+  useEffect(() => {
     if (!animate) return;
 
     const loop = () => {
@@ -35,7 +35,7 @@ export default function CosmologyView() {
     return () => {
       if (raf.current != null) {
         cancelAnimationFrame(raf.current);
-        raf.current = null; // optional: helps with future checks
+        raf.current = null;
       }
     };
   }, [animate]);
@@ -78,7 +78,7 @@ export default function CosmologyView() {
         />
 
         {NODES.map((node) => {
-          const hidden = collapsed[node.id];
+          const hidden = collapsed[node.id] ?? false;
           return (
             <g
               key={node.id}
