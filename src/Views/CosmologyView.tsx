@@ -19,14 +19,22 @@ const NODES: Node[] = [
 ];
 
 export default function CosmologyView() {
-  const [collapsed, setCollapsed] = useState<Record<NodeID, boolean>>({});
+  const [collapsed, setCollapsed] = useState<Partial<Record<NodeID, boolean>>>({});
   const [animate, setAnimate] = useState(true);
   const raf = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!animate) return;
+    if (!animate) {
+      if (raf.current != null) {
+        cancelAnimationFrame(raf.current);
+        raf.current = null;
+      }
+      return;
+    }
 
     const loop = () => {
+      // Your animation logic will go here eventually
+      // For now, it's just an empty spinning loop
       raf.current = requestAnimationFrame(loop);
     };
 
@@ -40,8 +48,9 @@ export default function CosmologyView() {
     };
   }, [animate]);
 
-  const toggle = (id: NodeID) =>
+  const toggle = (id: NodeID) => {
     setCollapsed((c) => ({ ...c, [id]: !c[id] }));
+  };
 
   return (
     <div className="relative w-full h-full bg-gradient-to-b from-[#0b1020] to-black overflow-hidden">
