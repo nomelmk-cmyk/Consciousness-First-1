@@ -25,22 +25,29 @@ export default function CosmologyView() {
 
   useEffect(() => {
     if (!animate) return;
+
     const loop = () => {
       raf.current = requestAnimationFrame(loop);
     };
+
     raf.current = requestAnimationFrame(loop);
-    return () => raf.current && cancelAnimationFrame(raf.current);
+
+    return () => {
+      if (raf.current !== null) {
+        cancelAnimationFrame(raf.current);
+      }
+    };
   }, [animate]);
 
   const toggle = (id: NodeID) =>
-    setCollapsed(c => ({ ...c, [id]: !c[id] }));
+    setCollapsed((c) => ({ ...c, [id]: !c[id] }));
 
   return (
     <div className="relative w-full h-full bg-gradient-to-b from-[#0b1020] to-black overflow-hidden">
       {/* Controls */}
       <div className="absolute top-4 right-4 z-20 flex gap-2">
         <button
-          onClick={() => setAnimate(a => !a)}
+          onClick={() => setAnimate((a) => !a)}
           className="px-3 py-2 rounded bg-gray-800 text-white touch-manipulation"
         >
           {animate ? "Pause" : "Play"}
@@ -69,7 +76,7 @@ export default function CosmologyView() {
           strokeDasharray="4 6"
         />
 
-        {NODES.map(node => {
+        {NODES.map((node) => {
           const hidden = collapsed[node.id];
           return (
             <g
