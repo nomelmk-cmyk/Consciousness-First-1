@@ -1,21 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  Play, 
-  Pause, 
-  RotateCcw, 
-  BookOpen, 
-  Sliders, 
-  Eye, 
-  Download, 
-  Upload, 
-  Users, 
-  Brain, 
-  Lightbulb, 
-  X, 
-  Check, 
-  AlertCircle, 
-  Share2 
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Play, Pause, RotateCcw, BookOpen, Sliders, Eye } from 'lucide-react';
 
 const ConsciousnessModel = () => {
   const [activeTab, setActiveTab] = useState('cosmology');
@@ -24,10 +8,10 @@ const ConsciousnessModel = () => {
   const [distinctions, setDistinctions] = useState(50);
   const [ideation, setIdeation] = useState(50);
   const [complexity, setComplexity] = useState(50);
-  const [insights, setInsights] = useState<Array<{ text: string; timestamp: number }>>([]);
+  const [insights, setInsights] = useState([]);
   const [learningMode, setLearningMode] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  const [collapsedNodes, setCollapsedNodes] = useState<string[]>([]);
+  const [collapsedNodes, setCollapsedNodes] = useState([]);
 
   const learningPath = {
     1: { tab: 'cosmology', message: 'First, understand the eternal architecture of consciousness...' },
@@ -62,12 +46,12 @@ const ConsciousnessModel = () => {
     localStorage.setItem('consciousnessModelState', JSON.stringify(state));
   }, [distinctions, ideation, complexity, insights]);
 
-  const addInsight = (text: string) => {
+  const addInsight = (text) => {
     const newInsight = { text, timestamp: Date.now() };
     setInsights(prev => [...prev.slice(-9), newInsight]);
   };
 
-  const TabButton = ({ id, icon: Icon, label }: { id: string; icon: React.ComponentType<any>; label: string }) => (
+  const TabButton = ({ id, icon: Icon, label }) => (
     <button
       onClick={() => {
         setActiveTab(id);
@@ -93,7 +77,7 @@ const ConsciousnessModel = () => {
       { id: 'infinity', label: '∞', desc: 'Eternal Circuit', y: 580 }
     ];
 
-    const handleCollapse = (nodeId: string) => {
+    const handleCollapse = (nodeId) => {
       if (collapsedNodes.includes(nodeId)) return;
       setCollapsedNodes(prev => [...prev, nodeId]);
       const nodeIndex = flow.findIndex(n => n.id === nodeId);
@@ -254,18 +238,9 @@ const ConsciousnessModel = () => {
             onClick={() => setLearningMode(!learningMode)}
             className={`inline-flex items-center gap-2 px-6 py-3 rounded-full text-lg font-medium ${learningMode ? 'bg-amber-600 text-white' : 'bg-gray-800 text-gray-400'}`}
           >
-            <Brain size={24} />
-            {learningMode ? 'Learning Mode Active' : 'Enable Learning Mode'}
+            Learning Mode
           </button>
         </header>
-
-        {learningMode && (
-          <div className="bg-amber-900/30 rounded-xl p-6 border border-amber-500/50 text-center">
-            <p className="text-amber-300 font-semibold text-lg">
-              Step {currentStep}: {learningPath[currentStep as keyof typeof learningPath].message}
-            </p>
-          </div>
-        )}
 
         <nav className="flex flex-wrap gap-3 justify-center">
           <TabButton id="cosmology" icon={RotateCcw} label="Cosmology" />
@@ -280,10 +255,6 @@ const ConsciousnessModel = () => {
           {activeTab === 'simulator' && <SimulatorView />}
           {activeTab === 'experiential' && <ExperientialView />}
         </main>
-
-        <footer className="text-center text-sm text-gray-600 pb-8">
-          <p>MIT Licensed • All data stays local • Built with love for direct recognition</p>
-        </footer>
       </div>
     </div>
   );
